@@ -1,7 +1,7 @@
 ﻿using SchoolManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace SchoolManagement.Api.Data
+namespace SchoolManagement.Infrastructure.Persistence
 {
     public class AppDbContext : DbContext
     {

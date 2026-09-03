@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using SchoolManagement.Api.Data;
+using Microsoft.Extensions.DependencyInjection;
+using SchoolManagement.Application.Interfaces;
+using SchoolManagement.Infrastructure.Persistence;
+using SchoolManagement.Infrastructure.Repositories;
 
 namespace SchoolManagement.Infrastructure
 {
@@ -12,6 +14,9 @@ namespace SchoolManagement.Infrastructure
         {
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<ITeacherRepository, TeacherRepository>();
+            services.AddScoped<IGradeRepository, GradeRepository>();
 
             return services;
         }
