@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Editar estudiante' : 'Nuevo estudiante' }}
+</h2>
+
+@if (saving()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-body">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        placeholder="Ej. Laura Gómez"
+        maxlength="100"
+        autocomplete="off">
+      @if (nameControl.invalid && nameControl.touched) {
+        <mat-error>{{ nameError() }}</mat-error>
+      }
+      <mat-hint align="end">{{ nameControl.value.length }} / 100</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton (click)="cancel()" [disabled]="saving()">Cancelar</button>
+  <button
+    matButton="filled"
+    (click)="save()"
+    [disabled]="form.invalid || saving()">
+    {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

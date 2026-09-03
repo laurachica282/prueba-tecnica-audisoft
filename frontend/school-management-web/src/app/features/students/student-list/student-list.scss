@@ -1,0 +1,66 @@
+.search-field {
+    width: 300px;
+
+    mat-icon[matPrefix] {
+        margin-right: 8px;
+        color: #9a9a9a;
+    }
+}
+
+.record-count {
+    color: #8a8a8a;
+    font-size: 0.82rem;
+}
+
+.id-col {
+    width: 70px;
+    color: #9a9a9a;
+}
+
+.name-cell {
+    font-weight: 500;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 11px;
+    background: #e8f0fe;
+    color: #1565c0;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge--zero {
+    background: #f2f2f2;
+    color: #9a9a9a;
+}
+
+.delete-button {
+    --mdc-icon-button-icon-color: #b3261e;
+}
+
+@media (max-width: 640px) {
+    .search-field {
+        width: 100%;
+    }
+
+    .record-count {
+        display: none;
+    }
+}
+
+.actions-cell {
+    width: 108px;
+    padding-right: 12px !important;
+}
+
+.mat-mdc-icon-button {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+}

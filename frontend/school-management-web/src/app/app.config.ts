@@ -2,7 +2,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
-
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { SpanishPaginatorIntl } from './core/spanish-paginator';
 import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
@@ -12,6 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([errorInterceptor]))
+    provideHttpClient(withInterceptors([errorInterceptor])),
+    { provide: MatPaginatorIntl, useClass: SpanishPaginatorIntl }
   ]
 };

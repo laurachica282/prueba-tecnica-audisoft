@@ -10,16 +10,21 @@ export class StudentService {
   private readonly baseUrl = '/api/students';
 
   getPaged(query: PaginationQuery): Observable<PagedResult<Student>> {
-    let params = new HttpParams()
-      .set('page', query.page)
-      .set('pageSize', query.pageSize);
+  let params = new HttpParams()
+    .set('page', query.page)
+    .set('pageSize', query.pageSize);
 
-    if (query.search?.trim()) {
-      params = params.set('search', query.search.trim());
-    }
-
-    return this.http.get<PagedResult<Student>>(this.baseUrl, { params });
+  if (query.search?.trim()) {
+    params = params.set('search', query.search.trim());
   }
+
+  if (query.sortBy) {
+    params = params.set('sortBy', query.sortBy);
+    params = params.set('sortDirection', query.sortDirection ?? 'asc');
+  }
+
+  return this.http.get<PagedResult<Student>>(this.baseUrl, { params });
+}
 
   getById(id: number): Observable<Student> {
     return this.http.get<Student>(`${this.baseUrl}/${id}`);

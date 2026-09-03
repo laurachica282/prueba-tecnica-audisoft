@@ -1,0 +1,14 @@
+.form-body {
+  padding-top: 8px;
+  min-width: 380px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .form-body {
+    min-width: auto;
+  }
+}

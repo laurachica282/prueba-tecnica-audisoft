@@ -18,6 +18,11 @@ export class GradeService {
       params = params.set('search', query.search.trim());
     }
 
+    if (query.sortBy) {
+      params = params.set('sortBy', query.sortBy);
+      params = params.set('sortDirection', query.sortDirection ?? 'asc');
+    }
+
     return this.http.get<PagedResult<Grade>>(this.baseUrl, { params });
   }
 

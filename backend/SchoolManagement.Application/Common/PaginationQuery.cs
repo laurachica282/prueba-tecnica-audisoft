@@ -18,5 +18,11 @@ namespace SchoolManagement.Application.Common
         }
 
         public string? Search { get; set; }
+        public string? SortBy { get; set; }
+
+        public string? SortDirection { get; set; }
+
+        public bool IsDescending =>
+            string.Equals(SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
     }
 }

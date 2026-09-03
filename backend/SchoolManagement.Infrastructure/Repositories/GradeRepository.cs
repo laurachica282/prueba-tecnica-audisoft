@@ -19,7 +19,7 @@ namespace SchoolManagement.Infrastructure.Repositories
         }
 
         public async Task<(IReadOnlyList<Grade> Items, int TotalCount)> GetPagedAsync(
-            PaginationQuery query, CancellationToken cancellationToken = default)
+    PaginationQuery query, CancellationToken cancellationToken = default)
         {
             IQueryable<Grade> filtered = _context.Grades
                 .AsNoTracking()
@@ -37,9 +37,26 @@ namespace SchoolManagement.Infrastructure.Repositories
 
             var totalCount = await filtered.CountAsync(cancellationToken);
 
+            filtered = query.SortBy?.ToLowerInvariant() switch
+            {
+                "id" => query.IsDescending
+                    ? filtered.OrderByDescending(g => g.Id)
+                    : filtered.OrderBy(g => g.Id),
+                "name" => query.IsDescending
+                    ? filtered.OrderByDescending(g => g.Name)
+                    : filtered.OrderBy(g => g.Name),
+                "value" => query.IsDescending
+                    ? filtered.OrderByDescending(g => g.Value)
+                    : filtered.OrderBy(g => g.Value),
+                "teachername" => query.IsDescending
+                    ? filtered.OrderByDescending(g => g.Teacher.Name)
+                    : filtered.OrderBy(g => g.Teacher.Name),
+                _ => query.IsDescending
+                    ? filtered.OrderByDescending(g => g.Student.Name)
+                    : filtered.OrderBy(g => g.Student.Name)
+            };
+
             var items = await filtered
-                .OrderBy(g => g.Student.Name)
-                .ThenBy(g => g.Name)
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToListAsync(cancellationToken);
