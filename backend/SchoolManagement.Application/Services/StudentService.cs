@@ -18,16 +18,21 @@ namespace SchoolManagement.Application.Services
             _repository = repository;
         }
 
-        public async Task<PagedResult<StudentDtos>> GetPagedAsync(
-            PaginationQuery query, CancellationToken cancellationToken = default)
+        public async Task<PagedResult<StudentDtos>> GetPagedAsync(PaginationQuery query, CancellationToken cancellationToken = default)
         {
             var (students, totalCount) = await _repository.GetPagedAsync(query, cancellationToken);
+            var ids = students.Select(s => s.Id).ToList();
 
-            var counts = await _repository.GetGradeCountsAsync(
-                students.Select(s => s.Id), cancellationToken);
+            var gradeCounts = await _repository.GetGradeCountsAsync(ids, cancellationToken);
+            var teacherCounts = await _repository.GetDistinctTeacherCountsAsync(ids, cancellationToken);
+            var totalTeachers = await _repository.CountAllTeachersAsync(cancellationToken);
 
             var items = students
-                .Select(s => MapToDto(s, counts.GetValueOrDefault(s.Id)))
+                .Select(s => MapToDto(
+                    s,
+                    gradeCounts.GetValueOrDefault(s.Id),
+                    teacherCounts.GetValueOrDefault(s.Id),
+                    totalTeachers))
                 .ToList();
 
             return new PagedResult<StudentDtos>
@@ -39,25 +44,37 @@ namespace SchoolManagement.Application.Services
             };
         }
 
+        private static StudentDtos MapToDto( Student student, int gradeCount, int distinctTeacherCount, int totalTeachers) => new()
+            {
+                Id = student.Id,
+                Name = student.Name,
+                GradeCount = gradeCount,
+                DistinctTeacherCount = distinctTeacherCount,
+                TotalTeachers = totalTeachers
+            };
+
         public async Task<StudentDtos> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var student = await _repository.GetByIdAsync(id, cancellationToken)
                 ?? throw new NotFoundException($"No se encontró el estudiante con id {id}.");
 
             var gradeCount = await _repository.CountGradesAsync(id, cancellationToken);
-            return MapToDto(student, gradeCount);
+            var teacherCounts = await _repository.GetDistinctTeacherCountsAsync([id], cancellationToken);
+            var totalTeachers = await _repository.CountAllTeachersAsync(cancellationToken);
+
+            return MapToDto(student, gradeCount, teacherCounts.GetValueOrDefault(id), totalTeachers);
         }
 
-        public async Task<StudentDtos> CreateAsync(
-            CreateStudentDto dto, CancellationToken cancellationToken = default)
+        public async Task<StudentDtos> CreateAsync(CreateStudentDto dto, CancellationToken cancellationToken = default)
         {
             var student = new Student { Name = dto.Name.Trim() };
             await _repository.AddAsync(student, cancellationToken);
-            return MapToDto(student, 0);
+
+            var totalTeachers = await _repository.CountAllTeachersAsync(cancellationToken);
+            return MapToDto(student, 0, 0, totalTeachers);
         }
 
-        public async Task<StudentDtos> UpdateAsync(
-            int id, UpdateStudentDto dto, CancellationToken cancellationToken = default)
+        public async Task<StudentDtos> UpdateAsync(int id, UpdateStudentDto dto, CancellationToken cancellationToken = default)
         {
             var student = await _repository.GetByIdAsync(id, cancellationToken)
                 ?? throw new NotFoundException($"No se encontró el estudiante con id {id}.");
@@ -65,8 +82,7 @@ namespace SchoolManagement.Application.Services
             student.Name = dto.Name.Trim();
             await _repository.UpdateAsync(student, cancellationToken);
 
-            var gradeCount = await _repository.CountGradesAsync(id, cancellationToken);
-            return MapToDto(student, gradeCount);
+            return await GetByIdAsync(id, cancellationToken);
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
@@ -85,12 +101,5 @@ namespace SchoolManagement.Application.Services
 
             await _repository.DeleteAsync(student, cancellationToken);
         }
-
-        private static StudentDtos MapToDto(Student student, int gradeCount) => new()
-        {
-            Id = student.Id,
-            Name = student.Name,
-            GradeCount = gradeCount
-        };
     }
 }

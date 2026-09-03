@@ -23,5 +23,9 @@ namespace SchoolManagement.Application.Interfaces
         Task AddAsync(Teacher teacher, CancellationToken cancellationToken = default);
         Task UpdateAsync(Teacher teacher, CancellationToken cancellationToken = default);
         Task DeleteAsync(Teacher teacher, CancellationToken cancellationToken = default);
+        Task<Dictionary<int, int>> GetDistinctStudentCountsAsync(
+    IEnumerable<int> teacherIds, CancellationToken cancellationToken = default);
+
+        Task<int> CountAllStudentsAsync(CancellationToken cancellationToken = default);
     }
 }

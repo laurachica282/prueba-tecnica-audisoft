@@ -10,6 +10,8 @@ namespace SchoolManagement.Application.DTOs
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int GradeCount { get; set; }
+        public int DistinctTeacherCount { get; set; }
+        public int TotalTeachers { get; set; }
     }
 
     public class CreateStudentDto

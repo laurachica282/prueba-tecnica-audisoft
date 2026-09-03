@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,42 +7,42 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { Student } from '../../../core/models/student.model';
+import { Teacher } from '../../../core/models/teacher.model';
 import { NotificationService } from '../../../core/services/notification.service';
-import { StudentService } from '../../../core/services/student.service';
-import { ConfirmDialog, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog';
-import { StudentForm } from '../student-form/student-form';
-import { MatSortModule, Sort } from '@angular/material/sort';
+import { TeacherService } from '../../../core/services/teacher.service';
+import { ConfirmDialogData, ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
+import { TeacherForm } from '../teacher-form/teacher-form';
 
 @Component({
   imports: [
     ReactiveFormsModule,
     MatTableModule,
+    MatSortModule,
     MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressBarModule,
-    MatTooltipModule,
-    MatSortModule
+    MatTooltipModule
   ],
-  selector: 'app-student-list',
-  styleUrl: './student-list.scss',
-  templateUrl: './student-list.html',
+  selector: 'app-teacher-list',
+  styleUrl: './teacher-list.scss',
+  templateUrl: './teacher-list.html',
 })
-export class StudentList implements OnInit {
-  private readonly service = inject(StudentService);
+export class TeacherList implements OnInit {
+  private readonly service = inject(TeacherService);
   private readonly dialog = inject(MatDialog);
   private readonly notification = inject(NotificationService);
 
   readonly displayedColumns = ['id', 'name', 'coverage', 'gradeCount', 'actions'];
   readonly pageSizeOptions = [5, 10, 25];
 
-  readonly students = signal<Student[]>([]);
+  readonly teachers = signal<Teacher[]>([]);
   readonly totalCount = signal(0);
   readonly loading = signal(false);
 
@@ -53,15 +53,8 @@ export class StudentList implements OnInit {
   private sortBy = 'name';
   private sortDirection: 'asc' | 'desc' = 'asc';
 
-  ngOnInit(): void {
-    this.load();
-
-    this.searchControl.valueChanges
-      .pipe(debounceTime(350), distinctUntilChanged())
-      .subscribe(() => {
-        this.page = 1;
-        this.load();
-      });
+  get pageIndex(): number {
+    return this.page - 1;
   }
 
   get activeSort(): string {
@@ -72,11 +65,15 @@ export class StudentList implements OnInit {
     return this.sortDirection;
   }
 
-  onSortChange(sort: Sort): void {
-    this.sortBy = sort.direction ? sort.active : 'name';
-    this.sortDirection = (sort.direction || 'asc') as 'asc' | 'desc';
-    this.page = 1;
+  ngOnInit(): void {
     this.load();
+
+    this.searchControl.valueChanges
+      .pipe(debounceTime(350), distinctUntilChanged())
+      .subscribe(() => {
+        this.page = 1;
+        this.load();
+      });
   }
 
   load(): void {
@@ -92,7 +89,7 @@ export class StudentList implements OnInit {
       })
       .subscribe({
         next: (result) => {
-          this.students.set(result.items);
+          this.teachers.set(result.items);
           this.totalCount.set(result.totalCount);
           this.loading.set(false);
         },
@@ -106,62 +103,57 @@ export class StudentList implements OnInit {
     this.load();
   }
 
-  get pageIndex(): number {
-    return this.page - 1;
+  onSortChange(sort: Sort): void {
+    this.sortBy = sort.direction ? sort.active : 'name';
+    this.sortDirection = (sort.direction || 'asc') as 'asc' | 'desc';
+    this.page = 1;
+    this.load();
   }
 
   openCreate(): void {
-    const ref = this.dialog.open(StudentForm, {
-      data: null,
-      width: '460px',
-      disableClose: true
-    });
+    const ref = this.dialog.open(TeacherForm, { data: null, width: '460px', disableClose: true });
 
     ref.afterClosed().subscribe((saved) => {
       if (saved) {
-        this.notification.success('Estudiante creado exitosamente.');
+        this.notification.success('Profesor creado exitosamente.');
         this.page = 1;
         this.load();
       }
     });
   }
 
-  openEdit(student: Student): void {
-    const ref = this.dialog.open(StudentForm, {
-      data: student,
-      width: '460px',
-      disableClose: true
-    });
+  openEdit(teacher: Teacher): void {
+    const ref = this.dialog.open(TeacherForm, { data: teacher, width: '460px', disableClose: true });
 
     ref.afterClosed().subscribe((saved) => {
       if (saved) {
-        this.notification.success('Estudiante actualizado exitosamente.');
+        this.notification.success('Profesor actualizado exitosamente.');
         this.load();
       }
     });
   }
 
-  confirmDelete(student: Student): void {
+  confirmDelete(teacher: Teacher): void {
     const data: ConfirmDialogData = {
-      title: 'Eliminar estudiante',
-      message: `¿Está seguro de eliminar a "${student.name}"? Esta acción no se puede deshacer.`
+      title: 'Eliminar profesor',
+      message: `¿Está seguro de eliminar a "${teacher.name}"? Esta acción no se puede deshacer.`
     };
 
     const ref = this.dialog.open(ConfirmDialog, { data, width: '440px' });
 
     ref.afterClosed().subscribe((confirmed) => {
-      if (confirmed) this.remove(student);
+      if (confirmed) this.remove(teacher);
     });
   }
 
-  private remove(student: Student): void {
+  private remove(teacher: Teacher): void {
     this.loading.set(true);
 
-    this.service.delete(student.id).subscribe({
+    this.service.delete(teacher.id).subscribe({
       next: () => {
-        this.notification.success('Estudiante eliminado exitosamente.');
+        this.notification.success('Profesor eliminado exitosamente.');
 
-        if (this.students().length === 1 && this.page > 1) {
+        if (this.teachers().length === 1 && this.page > 1) {
           this.page--;
         }
         this.load();
@@ -170,13 +162,13 @@ export class StudentList implements OnInit {
     });
   }
 
-  coveragePercent(student: Student): number {
-    if (student.totalTeachers === 0) return 0;
-    return (student.distinctTeacherCount / student.totalTeachers) * 100;
+  coveragePercent(teacher: Teacher): number {
+    if (teacher.totalStudents === 0) return 0;
+    return (teacher.distinctStudentCount / teacher.totalStudents) * 100;
   }
 
-  coverageClass(student: Student): string {
-    const percent = this.coveragePercent(student);
+  coverageClass(teacher: Teacher): string {
+    const percent = this.coveragePercent(teacher);
     if (percent === 0) return 'coverage--empty';
     if (percent >= 100) return 'coverage--full';
     return 'coverage--partial';

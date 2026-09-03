@@ -8,5 +8,11 @@ export const routes: Routes = [
             import('./features/students/student-list/student-list').then((m) => m.StudentList),
         title: 'Estudiantes'
     },
+    {
+        path: 'teachers',
+        loadComponent: () =>
+            import('./features/teachers/teacher-list/teacher-list').then((m) => m.TeacherList),
+        title: 'Profesores'
+    },
     { path: '**', redirectTo: 'students' }
 ];

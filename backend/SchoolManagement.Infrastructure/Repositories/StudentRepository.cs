@@ -88,5 +88,25 @@ namespace SchoolManagement.Infrastructure.Repositories
             _context.Students.Remove(student);
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task<Dictionary<int, int>> GetDistinctTeacherCountsAsync(
+    IEnumerable<int> studentIds, CancellationToken cancellationToken = default)
+        {
+            var ids = studentIds.ToList();
+            if (ids.Count == 0) return new Dictionary<int, int>();
+
+            return await _context.Grades
+                .Where(g => ids.Contains(g.StudentId))
+                .GroupBy(g => g.StudentId)
+                .Select(g => new
+                {
+                    StudentId = g.Key,
+                    Count = g.Select(x => x.TeacherId).Distinct().Count()
+                })
+                .ToDictionaryAsync(x => x.StudentId, x => x.Count, cancellationToken);
+        }
+
+        public async Task<int> CountAllTeachersAsync(CancellationToken cancellationToken = default)
+            => await _context.Teachers.CountAsync(cancellationToken);
     }
 }
