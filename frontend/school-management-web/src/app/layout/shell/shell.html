@@ -1,0 +1,21 @@
+<mat-toolbar class="app-bar">
+  <div class="app-bar__inner">
+    <a class="brand" routerLink="/students">
+      <mat-icon class="brand__icon">menu_book</mat-icon>
+      <span class="brand__text">Gestión Académica</span>
+    </a>
+
+    <nav class="nav">
+      @for (item of navItems; track item.path) {
+        <a class="nav__link" [routerLink]="item.path" routerLinkActive="nav__link--active">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </div>
+</mat-toolbar>
+
+<main>
+  <router-outlet />
+</main>
