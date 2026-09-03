@@ -9,6 +9,12 @@ Aplicación web CRUD para la gestión de estudiantes, profesores y notas.
 - **Frontend:** Angular 22 + Angular Material
 
 ## Estructura
+/SchoolManagement.Domain          Entidades del negocio
+/SchoolManagement.Application     DTOs, interfaces y servicios
+/SchoolManagement.Infrastructure  EF Core, repositorios y migraciones
+/SchoolManagement.Api             API REST
+/school-management-web            Aplicación Angular
+/SchoolDb_Script.sql              Script SQL generado desde las migraciones
 
 
 ## Requisitos previos
