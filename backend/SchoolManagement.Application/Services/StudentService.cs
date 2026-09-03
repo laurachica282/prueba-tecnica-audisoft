@@ -101,5 +101,14 @@ namespace SchoolManagement.Application.Services
 
             await _repository.DeleteAsync(student, cancellationToken);
         }
+
+        public async Task<IReadOnlyList<StudentDtos>> GetLookupAsync(CancellationToken cancellationToken = default)
+        {
+            var students = await _repository.GetAllAsync(cancellationToken);
+
+            return students
+                .Select(s => new StudentDtos { Id = s.Id, Name = s.Name })
+                .ToList();
+        }
     }
 }

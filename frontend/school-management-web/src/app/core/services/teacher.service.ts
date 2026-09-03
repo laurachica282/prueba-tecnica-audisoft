@@ -41,4 +41,8 @@ export class TeacherService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  getLookup(): Observable<Teacher[]> {
+  return this.http.get<Teacher[]>(`${this.baseUrl}/lookup`);
+} 
 }

@@ -20,5 +20,6 @@ namespace SchoolManagement.Application.Interfaces
         Task DeleteAsync(Student student, CancellationToken cancellationToken = default);
         Task<Dictionary<int, int>> GetDistinctTeacherCountsAsync(IEnumerable<int> studentIds, CancellationToken cancellationToken = default);
         Task<int> CountAllTeachersAsync(CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<Student>> GetAllAsync(CancellationToken cancellationToken = default);
     }
 }

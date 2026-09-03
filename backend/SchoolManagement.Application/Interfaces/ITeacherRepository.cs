@@ -27,5 +27,6 @@ namespace SchoolManagement.Application.Interfaces
     IEnumerable<int> teacherIds, CancellationToken cancellationToken = default);
 
         Task<int> CountAllStudentsAsync(CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<Teacher>> GetAllAsync(CancellationToken cancellationToken = default);
     }
 }

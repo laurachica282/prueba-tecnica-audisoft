@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Application.Common;
+using SchoolManagement.Application.DTOs;
 using SchoolManagement.Application.Interfaces;
 using SchoolManagement.Domain.Entities;
 using SchoolManagement.Infrastructure.Persistence;
@@ -108,5 +109,11 @@ namespace SchoolManagement.Infrastructure.Repositories
 
         public async Task<int> CountAllTeachersAsync(CancellationToken cancellationToken = default)
             => await _context.Teachers.CountAsync(cancellationToken);
+
+        public async Task<IReadOnlyList<Student>> GetAllAsync(CancellationToken cancellationToken = default)
+            => await _context.Students
+        .AsNoTracking()
+        .OrderBy(s => s.Name)
+        .ToListAsync(cancellationToken);
     }
 }

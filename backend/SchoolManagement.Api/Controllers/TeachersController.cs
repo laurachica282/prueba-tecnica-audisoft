@@ -45,5 +45,9 @@ namespace SchoolManagement.Api.Controllers
             await _service.DeleteAsync(id, cancellationToken);
             return NoContent();
         }
+
+
+        [HttpGet("lookup")]
+        public async Task<ActionResult<IReadOnlyList<TeacherDtos>>> GetLookup(CancellationToken cancellationToken) => Ok(await _service.GetLookupAsync(cancellationToken));
     }
 }

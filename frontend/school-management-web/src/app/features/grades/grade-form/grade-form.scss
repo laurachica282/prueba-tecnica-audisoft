@@ -1,0 +1,22 @@
+.form-body {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  min-width: 420px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.value-suffix {
+  color: #9a9a9a;
+  font-size: 0.85rem;
+  padding-right: 4px;
+}
+
+@media (max-width: 520px) {
+  .form-body {
+    min-width: auto;
+  }
+}

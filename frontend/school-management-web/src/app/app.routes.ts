@@ -14,5 +14,11 @@ export const routes: Routes = [
             import('./features/teachers/teacher-list/teacher-list').then((m) => m.TeacherList),
         title: 'Profesores'
     },
+    {
+        path: 'grades',
+        loadComponent: () =>
+            import('./features/grades/grade-list/grade-list').then((m) => m.GradeList),
+        title: 'Notas'
+    },
     { path: '**', redirectTo: 'students' }
 ];

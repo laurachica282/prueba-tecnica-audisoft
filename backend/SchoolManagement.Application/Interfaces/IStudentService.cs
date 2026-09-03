@@ -15,5 +15,6 @@ namespace SchoolManagement.Application.Interfaces
         Task<StudentDtos> CreateAsync(CreateStudentDto dto, CancellationToken cancellationToken = default);
         Task<StudentDtos> UpdateAsync(int id, UpdateStudentDto dto, CancellationToken cancellationToken = default);
         Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<StudentDtos>> GetLookupAsync(CancellationToken cancellationToken = default);
     }
 }

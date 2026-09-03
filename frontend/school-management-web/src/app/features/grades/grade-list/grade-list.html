@@ -1,0 +1,94 @@
+<div class="page">
+    <header class="page__header">
+        <div>
+            <h1 class="page__title">Notas</h1>
+            <p class="page__subtitle">Registre y consulte las calificaciones asignadas.</p>
+        </div>
+
+        <button matButton="filled" (click)="openCreate()">
+            <mat-icon>add</mat-icon>
+            Nueva nota
+        </button>
+    </header>
+
+    <section class="surface">
+        <div class="toolbar-row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput [formControl]="searchControl" placeholder="Buscar por nota, estudiante o profesor"
+                    autocomplete="off">
+                @if (searchControl.value) {
+                <button matIconButton matSuffix (click)="searchControl.setValue('')" aria-label="Limpiar">
+                    <mat-icon>close</mat-icon>
+                </button>
+                }
+            </mat-form-field>
+
+            <span class="spacer"></span>
+
+            <span class="record-count">{{ totalCount() }} registro(s)</span>
+        </div>
+
+        @if (loading()) {
+        <mat-progress-bar mode="indeterminate" />
+        }
+
+        @if (grades().length > 0) {
+        <table mat-table [dataSource]="grades()" matSort [matSortActive]="activeSort" [matSortDirection]="sortDir"
+            (matSortChange)="onSortChange($event)">
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="id-col">ID</th>
+                <td mat-cell *matCellDef="let grade" class="id-col">{{ grade.id }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nota</th>
+                <td mat-cell *matCellDef="let grade" class="name-cell">{{ grade.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="studentName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Estudiante</th>
+                <td mat-cell *matCellDef="let grade">{{ grade.studentName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="teacherName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Profesor</th>
+                <td mat-cell *matCellDef="let grade" class="muted-cell">{{ grade.teacherName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor</th>
+                <td mat-cell *matCellDef="let grade">
+                    <span class="score" [class]="valueClass(grade.value)">{{ grade.value | number: '1.1-1' }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="actions-cell">Acciones</th>
+                <td mat-cell *matCellDef="let grade" class="actions-cell">
+                    <button matIconButton (click)="openEdit(grade)" matTooltip="Editar">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button matIconButton class="delete-button" (click)="confirmDelete(grade)" matTooltip="Eliminar">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        } @else if (!loading()) {
+        <div class="empty-state">
+            <mat-icon>grading</mat-icon>
+            <p>
+                {{ searchControl.value ? 'No se encontraron notas con ese criterio.' : 'Aún no hay notas registradas.'
+                }}
+            </p>
+        </div>
+        }
+
+        <mat-paginator [length]="totalCount()" [pageSize]="5" [pageIndex]="pageIndex"
+            [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" aria-label="Seleccionar página" />
+    </section>
+</div>

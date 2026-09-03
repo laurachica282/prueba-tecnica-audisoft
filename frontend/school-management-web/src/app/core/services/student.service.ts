@@ -41,4 +41,8 @@ export class StudentService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  getLookup(): Observable<Student[]> {
+  return this.http.get<Student[]>(`${this.baseUrl}/lookup`);
+}
 }
