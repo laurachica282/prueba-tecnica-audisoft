@@ -13,6 +13,30 @@
             </a>
             }
         </nav>
+
+        <span class="spacer"></span>
+
+        @if (auth.isAuthenticated()) {
+        <button class="user-chip" [matMenuTriggerFor]="userMenu">
+            <span class="avatar">{{ initials() }}</span>
+            <span class="user-chip__text">
+                <span class="user-chip__name">{{ auth.currentUser()?.fullName }}</span>
+                <span class="user-chip__role">{{ auth.roleLabel() }}</span>
+            </span>
+            <mat-icon class="user-chip__caret">expand_more</mat-icon>
+        </button>
+
+        <mat-menu #userMenu="matMenu" xPosition="before">
+            <div class="menu-header">
+                <p class="menu-header__name">{{ auth.currentUser()?.fullName }}</p>
+                <p class="menu-header__email">{{ auth.currentUser()?.email }}</p>
+            </div>
+            <button mat-menu-item (click)="logout()">
+                <mat-icon>logout</mat-icon>
+                <span>Cerrar sesión</span>
+            </button>
+        </mat-menu>
+        }
     </div>
 </mat-toolbar>
 

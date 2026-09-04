@@ -16,6 +16,7 @@ import { StudentService } from '../../../core/services/student.service';
 import { ConfirmDialog, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog';
 import { StudentForm } from '../student-form/student-form';
 import { MatSortModule, Sort } from '@angular/material/sort';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   imports: [
@@ -39,12 +40,13 @@ export class StudentList implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly notification = inject(NotificationService);
 
-  readonly displayedColumns = ['id', 'name', 'coverage', 'gradeCount', 'actions'];
   readonly pageSizeOptions = [5, 10, 25];
 
   readonly students = signal<Student[]>([]);
   readonly totalCount = signal(0);
   readonly loading = signal(false);
+
+  readonly auth = inject(AuthService);
 
   readonly searchControl = new FormControl('', { nonNullable: true });
 
@@ -181,4 +183,9 @@ export class StudentList implements OnInit {
     if (percent >= 100) return 'coverage--full';
     return 'coverage--partial';
   }
+
+  get displayedColumns(): string[] {
+  const base = ['id', 'name', 'coverage', 'gradeCount'];
+  return this.auth.isAdministrator() ? [...base, 'actions'] : base;
+}
 }

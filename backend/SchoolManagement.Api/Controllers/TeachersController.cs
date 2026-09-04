@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Application.Common;
 using SchoolManagement.Application.DTOs;
 using SchoolManagement.Application.Interfaces;
@@ -21,12 +22,16 @@ namespace SchoolManagement.Api.Controllers
             [FromQuery] PaginationQuery query, CancellationToken cancellationToken)
             => Ok(await _service.GetPagedAsync(query, cancellationToken));
 
+        [HttpGet("lookup")]
+        public async Task<ActionResult<IReadOnlyList<TeacherDtos>>> GetLookup(CancellationToken cancellationToken) => Ok(await _service.GetLookupAsync(cancellationToken));
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<TeacherDtos>> GetById(
             int id, CancellationToken cancellationToken)
             => Ok(await _service.GetByIdAsync(id, cancellationToken));
 
         [HttpPost]
+        [Authorize(Policy = "CanManagePeople")]
         public async Task<ActionResult<TeacherDtos>> Create(
             [FromBody] CreateTeacherDto dto, CancellationToken cancellationToken)
         {
@@ -35,19 +40,17 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Policy = "CanManagePeople")]
         public async Task<ActionResult<TeacherDtos>> Update(
             int id, [FromBody] UpdateTeacherDto dto, CancellationToken cancellationToken)
             => Ok(await _service.UpdateAsync(id, dto, cancellationToken));
 
         [HttpDelete("{id:int}")]
+        [Authorize(Policy = "CanManagePeople")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             await _service.DeleteAsync(id, cancellationToken);
             return NoContent();
         }
-
-
-        [HttpGet("lookup")]
-        public async Task<ActionResult<IReadOnlyList<TeacherDtos>>> GetLookup(CancellationToken cancellationToken) => Ok(await _service.GetLookupAsync(cancellationToken));
     }
 }

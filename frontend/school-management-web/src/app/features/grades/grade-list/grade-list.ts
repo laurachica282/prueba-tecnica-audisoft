@@ -17,6 +17,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { ConfirmDialogData, ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
 import { GradeForm } from '../grade-form/grade-form';
 import { DecimalPipe } from '@angular/common';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   imports: [
@@ -40,8 +41,12 @@ export class GradeList implements OnInit {
   private readonly service = inject(GradeService);
   private readonly dialog = inject(MatDialog);
   private readonly notification = inject(NotificationService);
-
-  readonly displayedColumns = ['id', 'name', 'studentName', 'teacherName', 'value', 'actions'];
+  
+  readonly auth = inject(AuthService);
+  get displayedColumns(): string[] {
+  const base = ['id', 'name', 'studentName', 'teacherName', 'value'];
+  return this.auth.isTeacher() ? [...base, 'actions'] : base;
+}
   readonly pageSizeOptions = [5, 10, 25];
 
   readonly grades = signal<Grade[]>([]);

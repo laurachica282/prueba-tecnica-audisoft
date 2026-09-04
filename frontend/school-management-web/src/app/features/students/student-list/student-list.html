@@ -5,10 +5,12 @@
             <p class="page__subtitle">Gestione los estudiantes registrados en el sistema.</p>
         </div>
 
+        @if (auth.isAdministrator()) {
         <button matButton="filled" (click)="openCreate()">
             <mat-icon>add</mat-icon>
             Nuevo estudiante
         </button>
+        }
     </header>
 
     <section class="surface">
@@ -48,16 +50,10 @@
             <ng-container matColumnDef="coverage">
                 <th mat-header-cell *matHeaderCellDef>Calificado por</th>
                 <td mat-cell *matCellDef="let student">
-                    <div class="coverage"
+                    <span class="coverage-value" [class]="coverageClass(student)"
                         [matTooltip]="student.distinctTeacherCount + ' de ' + student.totalTeachers + ' profesores le han asignado nota'">
-                        <span class="coverage__text" [class]="coverageClass(student)">
-                            {{ student.distinctTeacherCount }}/{{ student.totalTeachers }}
-                        </span>
-                        <div class="coverage__track">
-                            <div class="coverage__bar" [class]="coverageClass(student)"
-                                [style.width.%]="coveragePercent(student)"></div>
-                        </div>
-                    </div>
+                        {{ student.distinctTeacherCount }}/{{ student.totalTeachers }}
+                    </span>
                 </td>
             </ng-container>
 

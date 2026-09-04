@@ -16,6 +16,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TeacherService } from '../../../core/services/teacher.service';
 import { ConfirmDialogData, ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
 import { TeacherForm } from '../teacher-form/teacher-form';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   imports: [
@@ -39,7 +40,11 @@ export class TeacherList implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly notification = inject(NotificationService);
 
-  readonly displayedColumns = ['id', 'name', 'coverage', 'gradeCount', 'actions'];
+  readonly auth = inject(AuthService);
+  get displayedColumns(): string[] {
+    const base = ['id', 'name', 'coverage', 'gradeCount'];
+    return this.auth.isAdministrator() ? [...base, 'actions'] : base;
+  }
   readonly pageSizeOptions = [5, 10, 25];
 
   readonly teachers = signal<Teacher[]>([]);

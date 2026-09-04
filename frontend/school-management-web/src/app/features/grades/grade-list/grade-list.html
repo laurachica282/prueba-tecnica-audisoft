@@ -5,10 +5,12 @@
             <p class="page__subtitle">Registre y consulte las calificaciones asignadas.</p>
         </div>
 
+        @if (auth.isTeacher()) {
         <button matButton="filled" (click)="openCreate()">
             <mat-icon>add</mat-icon>
             Nueva nota
         </button>
+        }
     </header>
 
     <section class="surface">

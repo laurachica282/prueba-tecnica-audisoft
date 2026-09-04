@@ -24,6 +24,14 @@ function buildMessage(error: HttpErrorResponse): string {
     return messages.join(' ');
   }
 
+  if (error.status === 403) {
+    return 'No tiene permisos para realizar esta acción.';
+  }
+
+  if (error.status === 401) {
+    return 'Su sesión expiró. Vuelva a iniciar sesión.';
+  }
+
   if (error.error?.message) {
     return error.error.message;
   }

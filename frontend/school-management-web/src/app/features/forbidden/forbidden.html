@@ -1,0 +1,10 @@
+<div class="page">
+    <div class="forbidden">
+        <mat-icon class="forbidden__icon">lock</mat-icon>
+        <h1 class="forbidden__title">Acceso restringido</h1>
+        <p class="forbidden__text">
+            Su rol de <strong>{{ auth.roleLabel() }}</strong> no tiene permisos para acceder a esta sección.
+        </p>
+        <button matButton="filled" (click)="goBack()">Volver al inicio</button>
+    </div>
+</div>
